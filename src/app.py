@@ -110,7 +110,7 @@ class App(ctk.CTk):
             i, j = item
             self.buttons[i][j].configure(fg_color=VISITED_COLOR)
             self.update()
-            self.after(100)
+            self.after(25)
 
     def reset(self) -> None:
         self.a_star = Astar()
