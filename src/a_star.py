@@ -19,17 +19,20 @@ class Astar:
         self.end = (19, 0)  # Koniec, tak samo na sztywno, zawsze bedzie to lewy dolny
         self.rows = 20
         self.cols = 20
+        # musze sobie stworzyc liste odwiedzonych zeby pozniej moc to zaanimowac
+        self.visited_list = []
         # kazal Pan dodac funkcjonalnosc, ze robot moze skruszyc sciany i przez nie przejsc
         # wobec tego zaznaczenie w gridzie czegos jako 4 sprawia ze ta sciana jest mozliwa
         # do skruszenia
         self.crushed_walls = 0
+        self.crushed_walls_location = []
         self.grid = self.get_grid()
-        self.get_path()
-        self.print_path()
-        if self.crushed_walls > 0:
-            print(f"crushed walls: {self.crushed_walls}")
+        # self.get_path()
+        # self.print_path()
+        # if self.crushed_walls > 0:
+        #     print(f"crushed walls: {self.crushed_walls}")
 
-    def get_path(self) -> None:
+    def get_path(self, buttons: list) -> None:
         """znajdz sciezke"""
         self.g_costs = {self.start: 0}
         self.f_costs = {self.start: self.heuristic(self.start, self.end)}
@@ -40,6 +43,7 @@ class Astar:
         while self.open_list:
             # znajdz komorke z najnizszym kosztem
             current = self.get_lowest_f_cost()
+            self.visited_list.append(current)
 
             if current == self.end:
                 # tutaj recznie musialem dodac uzupelnianie sciezki dla ostatniego punktu, inaczej nie zaznacza ostatniego
@@ -139,6 +143,7 @@ class Astar:
         """sprawdz czy punkt zawiera sciane mozliwa do skruszenia"""
         if self.grid[current[0]][current[1]] == 4:
             print(f"wall crushed at {current[0]}, {current[1]}")
+            self.crushed_walls_location.append((current[0], current[1]))
             self.crushed_walls += 1
 
 
