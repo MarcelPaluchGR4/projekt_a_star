@@ -13,10 +13,10 @@ class Astar:
         # a wartosciami punkt z ktorego dotarlismy do tego punktu
         self.came_from = {}
         self.start = (
-            0,
             19,
+            0,
         )  # Start, zadeklarowany na sztywno, gdyz zawsze bedzie to punkt w lewym dolnym rogu
-        self.end = (19, 0)  # Koniec, tak samo na sztywno, zawsze bedzie to lewy dolny
+        self.end = (0, 19)  # Koniec, tak samo na sztywno, zawsze bedzie to lewy dolny
         self.rows = 20
         self.cols = 20
         # musze sobie stworzyc liste odwiedzonych zeby pozniej moc to zaanimowac
@@ -56,6 +56,7 @@ class Astar:
             self.closed_list.add(current)
 
             neighbors = self.get_neighbors(current)
+
             for neighbor in neighbors:
                 # jezeli sasiad na liscie zamknietej albo = 5 (sciezka zablokowana) przejdz do kolejnego
                 if (
