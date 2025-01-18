@@ -11,7 +11,7 @@ class Astar:
         self.closed_list = set()
         # slownik gdzie kluczami sa obecne punkty,
         # a wartosciami punkt z ktorego dotarlismy do tego punktu
-        self.came_from = {}
+        self.path_map = {}
         self.start = (
             0,
             19,
@@ -39,13 +39,13 @@ class Astar:
 
         while self.open_list:
             # znajdz komorke z najnizszym kosztem
-            current = self.get_lowest_f_cost()
+            current = self.get_lowest_cost_point()
 
             if current == self.end:
                 # tutaj recznie musialem dodac uzupelnianie sciezki dla ostatniego punktu, inaczej nie zaznacza ostatniego
                 i, j = self.start
                 self.grid[i][j] = 3
-                self.reconstruct_path(self.came_from)
+                self.reconstruct_path(self.path_map)
                 return
 
             self.open_list.remove((self.f_costs[current], current))
@@ -59,22 +59,24 @@ class Astar:
                     or self.grid[neighbor[0]][neighbor[1]] == 5
                 ):
                     continue
-
-                tentative_g_cost = self.g_costs[current] + 1
+                # sprawdzenie kosztu dotarcia do sasiada
+                checked_g_cost = self.g_costs[current] + 1
                 if (
                     neighbor not in self.g_costs
-                    or tentative_g_cost < self.g_costs[neighbor]
+                    or checked_g_cost < self.g_costs[neighbor]
                 ):
-                    self.came_from[neighbor] = current
-                    self.g_costs[neighbor] = tentative_g_cost
-                    self.f_costs[neighbor] = tentative_g_cost + self.heuristic(
+                    # aktualizacja kosztow
+                    self.path_map[neighbor] = current
+                    self.g_costs[neighbor] = checked_g_cost
+                    self.f_costs[neighbor] = checked_g_cost + self.heuristic(
                         neighbor, self.end
                     )
 
+                    # dodanie sasiada do listy otwartej jesli go tam nie ma
                     if neighbor not in [x[1] for x in self.open_list]:
                         self.open_list.append((self.f_costs[neighbor], neighbor))
 
-    def get_lowest_f_cost(self) -> tuple[int, int]:
+    def get_lowest_cost_point(self) -> tuple[int, int]:
         """zwraca wspolrzedne elementu o najnizszym koszcie"""
         lowest_cost = min(self.open_list, key=lambda x: x[0])
         return lowest_cost[1]
@@ -92,7 +94,8 @@ class Astar:
         return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
     def get_neighbors(self, current: dict):
-        # w tej funkcji musialem odpowiednio ustawic kierunki, aby funkcja nadawala priorytet poruszaniu sie najpierw w prawo, pozniej w gore
+        # w tej funkcji musialem odpowiednio ustawic kierunki,
+        # aby funkcja nadawala priorytet poruszaniu sie najpierw w prawo, pozniej w gore
         row, col = current
         neighbors = []
 
