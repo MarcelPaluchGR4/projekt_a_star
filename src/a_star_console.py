@@ -60,6 +60,7 @@ class Astar:
                 ):
                     continue
                 # sprawdzenie kosztu dotarcia do sasiada
+                # dodajemy 1, gdyz koszt pojedynczego ruchu to 1
                 checked_g_cost = self.g_costs[current] + 1
                 if (
                     neighbor not in self.g_costs
