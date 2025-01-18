@@ -104,9 +104,7 @@ class App(ctk.CTk):
             )
 
     def color_visited(self) -> None:
-        reversed_list = self.a_star.visited_list
-        # reversed_list.reverse()
-        for item in reversed_list:
+        for item in self.a_star.visited_list:
             i, j = item
             self.buttons[i][j].configure(fg_color=VISITED_COLOR)
             self.update()
@@ -115,7 +113,3 @@ class App(ctk.CTk):
     def reset(self) -> None:
         self.a_star = Astar()
         self.color_buttons()
-
-
-root = App()
-root.mainloop()
