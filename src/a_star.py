@@ -27,12 +27,8 @@ class Astar:
         self.crushed_walls = 0
         self.crushed_walls_location = []
         self.grid = self.get_grid()
-        # self.get_path()
-        # self.print_path()
-        # if self.crushed_walls > 0:
-        #     print(f"crushed walls: {self.crushed_walls}")
 
-    def get_path(self, buttons: list) -> None:
+    def get_path(self) -> None:
         """znajdz sciezke"""
         self.g_costs = {self.start: 0}
         self.f_costs = {self.start: self.heuristic(self.start, self.end)}
@@ -96,7 +92,7 @@ class Astar:
         """heurystyka"""
         return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
-    def get_neighbors(self, current: dict):
+    def get_neighbors(self, current: dict) -> list[tuple[int, int]]:
         # w tej funkcji musialem odpowiednio ustawic kierunki, aby funkcja nadawala priorytet poruszaniu sie najpierw w prawo, pozniej w gore
         row, col = current
         neighbors = []

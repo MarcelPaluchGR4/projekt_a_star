@@ -15,8 +15,8 @@ VISITED_COLOR = "gray"
 
 
 class App(ctk.CTk):
-    def __init__(self, fg_color=None, **kwargs) -> None:
-        super().__init__(fg_color, **kwargs)
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
         ctk.set_appearance_mode("dark")
         self.create_frames()
         self.create_default_grid()
@@ -94,7 +94,7 @@ class App(ctk.CTk):
         self.find_path_button.grid(row=99, column=0, padx=10, pady=10, sticky="NSEW")
 
     def find_path(self) -> None:
-        self.a_star.get_path(self.buttons)
+        self.a_star.get_path()
 
         self.color_buttons()
         if self.a_star.crushed_walls > 0:
