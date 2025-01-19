@@ -45,7 +45,7 @@ class Astar:
                 # tutaj recznie musialem dodac uzupelnianie sciezki dla ostatniego punktu, inaczej nie zaznacza ostatniego
                 i, j = self.start
                 self.grid[i][j] = 3
-                self.reconstruct_path(self.path_map)
+                self.reconstruct_path()
                 return
 
             self.open_list.remove((self.f_costs[current], current))
@@ -61,17 +61,21 @@ class Astar:
                 ):
                     continue
 
+                # sprawdzenie kosztu dotarcia do sasiada
+                # dodajemy 1, gdyz koszt pojedynczego ruchu to 1
                 checked_g_cost = self.g_costs[current] + 1
                 if (
                     neighbor not in self.g_costs
                     or checked_g_cost < self.g_costs[neighbor]
                 ):
+                    # aktualizacja kosztow
                     self.path_map[neighbor] = current
                     self.g_costs[neighbor] = checked_g_cost
                     self.f_costs[neighbor] = checked_g_cost + self.heuristic(
                         neighbor, self.end
                     )
 
+                    # dodanie sasiada do listy otwartej jesli go tam nie ma
                     if neighbor not in [x[1] for x in self.open_list]:
                         self.open_list.append((self.f_costs[neighbor], neighbor))
 
@@ -80,13 +84,13 @@ class Astar:
         lowest_cost = min(self.open_list, key=lambda x: x[0])
         return lowest_cost[1]
 
-    def reconstruct_path(self, came_from: dict) -> None:
+    def reconstruct_path(self) -> None:
         """stworz sciezke"""
         current = self.end
         while current != self.start:
             self.check_if_crushable_wall(current)
             self.grid[current[0]][current[1]] = 3
-            current = came_from[current]
+            current = self.path_map[current]
 
     def heuristic(self, a: tuple[int, int], b: tuple[int, int]) -> float:
         """heurystyka"""
