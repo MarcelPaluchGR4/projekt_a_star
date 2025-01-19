@@ -11,7 +11,7 @@ class Astar:
         self.closed_list = set()
         # slownik gdzie kluczami sa obecne punkty,
         # a wartosciami punkt z ktorego dotarlismy do tego punktu
-        self.came_from = {}
+        self.path_map = {}
         self.start = (
             19,
             0,
@@ -45,7 +45,7 @@ class Astar:
                 # tutaj recznie musialem dodac uzupelnianie sciezki dla ostatniego punktu, inaczej nie zaznacza ostatniego
                 i, j = self.start
                 self.grid[i][j] = 3
-                self.reconstruct_path(self.came_from)
+                self.reconstruct_path(self.path_map)
                 return
 
             self.open_list.remove((self.f_costs[current], current))
@@ -66,7 +66,7 @@ class Astar:
                     neighbor not in self.g_costs
                     or tentative_g_cost < self.g_costs[neighbor]
                 ):
-                    self.came_from[neighbor] = current
+                    self.path_map[neighbor] = current
                     self.g_costs[neighbor] = tentative_g_cost
                     self.f_costs[neighbor] = tentative_g_cost + self.heuristic(
                         neighbor, self.end

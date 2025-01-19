@@ -94,7 +94,7 @@ class Astar:
         """heurystyka"""
         return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
-    def get_neighbors(self, current: dict):
+    def get_neighbors(self, current: dict) -> list:
         # w tej funkcji musialem odpowiednio ustawic kierunki,
         # aby funkcja nadawala priorytet poruszaniu sie najpierw w prawo, pozniej w gore
         row, col = current
