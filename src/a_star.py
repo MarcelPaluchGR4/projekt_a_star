@@ -61,14 +61,14 @@ class Astar:
                 ):
                     continue
 
-                tentative_g_cost = self.g_costs[current] + 1
+                checked_g_cost = self.g_costs[current] + 1
                 if (
                     neighbor not in self.g_costs
-                    or tentative_g_cost < self.g_costs[neighbor]
+                    or checked_g_cost < self.g_costs[neighbor]
                 ):
                     self.path_map[neighbor] = current
-                    self.g_costs[neighbor] = tentative_g_cost
-                    self.f_costs[neighbor] = tentative_g_cost + self.heuristic(
+                    self.g_costs[neighbor] = checked_g_cost
+                    self.f_costs[neighbor] = checked_g_cost + self.heuristic(
                         neighbor, self.end
                     )
 
