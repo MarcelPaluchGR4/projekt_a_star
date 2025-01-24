@@ -78,12 +78,19 @@ class Astar:
                     self.f_costs[current] + 1 + self.heuristic(neighbor, self.start),
                     4,
                 )
-                if neighbor not in self.f_costs or new_f_cost < self.f_costs[neighbor]:
-                    self.path_map[neighbor] = current
-                    self.f_costs[neighbor] = new_f_cost
+                try:
+                    if neighbor in self.f_costs or new_f_cost >= self.f_costs[neighbor]:
+                        continue
+                except KeyError:
+                    pass
 
-                    if neighbor not in [x[1] for x in self.open_list]:
-                        self.open_list.append((self.f_costs[neighbor], neighbor))
+                self.path_map[neighbor] = current
+                self.f_costs[neighbor] = new_f_cost
+
+                if neighbor in [x[1] for x in self.open_list]:
+                    continue
+
+                self.open_list.append(((self.f_costs[neighbor], neighbor)))
 
     def get_lowest_f_cost(self) -> tuple[int, int]:
         """zwraca wspolrzedne elementu o najnizszym koszcie"""
