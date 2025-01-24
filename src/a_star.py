@@ -30,15 +30,22 @@ class Astar:
         self.crushed_walls_location = []
         self.grid = self.get_grid()
 
-    def is_finish(self, current) -> bool:
+    def is_finish(self, current: tuple[int, int]) -> bool:
         if self.end == current:
             return True
         return False
 
-    def is_passable(self, neighbor) -> bool:
+    def is_passable(self, neighbor: tuple[int, int]) -> bool:
         if neighbor in self.closed_list or self.grid[neighbor[0]][neighbor[1]] == 5:
             return False
         return True
+
+    def check_if_in_open_list(self, neighbor: tuple[int, int]) -> bool:
+        for item in self.open_list:
+            helper = item[1]
+            if neighbor == helper:
+                return True
+        return False
 
     def get_path(self) -> None:
         """znajdz sciezke"""
@@ -87,7 +94,7 @@ class Astar:
                 self.path_map[neighbor] = current
                 self.f_costs[neighbor] = new_f_cost
 
-                if neighbor in [x[1] for x in self.open_list]:
+                if self.check_if_in_open_list(neighbor):
                     continue
 
                 self.open_list.append(((self.f_costs[neighbor], neighbor)))
