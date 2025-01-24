@@ -1,6 +1,8 @@
+## get path calokowicie na nowo, lsita zamknieta i otwarta maja przechowywac caly punkt
+
 import math
 
-PATH_TO_GRID_FILE = "grid.txt"
+PATH_TO_GRID_FILE = "grid2.txt"
 
 
 class Astar:
@@ -28,9 +30,18 @@ class Astar:
         self.crushed_walls_location = []
         self.grid = self.get_grid()
 
+    def is_finish(self, current) -> bool:
+        if self.end == current:
+            return True
+        return False
+
+    def is_passable(self, neighbor) -> bool:
+        if neighbor in self.closed_list or self.grid[neighbor[0]][neighbor[1]] == 5:
+            return False
+        return True
+
     def get_path(self) -> None:
         """znajdz sciezke"""
-        self.g_costs = {self.start: 0}
         self.f_costs = {self.start: self.heuristic(self.start, self.end)}
 
         # dodaj start do listy otwartej
@@ -41,41 +52,36 @@ class Astar:
             current = self.get_lowest_f_cost()
             self.visited_list.append(current)
 
-            if current == self.end:
+            if self.is_finish(current):
                 # tutaj recznie musialem dodac uzupelnianie sciezki dla ostatniego punktu, inaczej nie zaznacza ostatniego
                 i, j = self.start
                 self.grid[i][j] = 3
                 self.reconstruct_path()
                 return
 
-            self.open_list.remove((self.f_costs[current], current))
+            for item in self.open_list:
+                if item[1] == current:
+                    self.open_list.remove(item)
             self.closed_list.add(current)
 
             neighbors = self.get_neighbors(current)
 
             for neighbor in neighbors:
                 # jezeli sasiad na liscie zamknietej albo = 5 (sciezka zablokowana) przejdz do kolejnego
-                if (
-                    neighbor in self.closed_list
-                    or self.grid[neighbor[0]][neighbor[1]] == 5
-                ):
+                if self.is_passable(neighbor) is False:
                     continue
 
                 # sprawdzenie kosztu dotarcia do sasiada
                 # dodajemy 1, gdyz koszt pojedynczego ruchu to 1
-                checked_g_cost = self.g_costs[current] + 1
-                if (
-                    neighbor not in self.g_costs
-                    or checked_g_cost < self.g_costs[neighbor]
-                ):
-                    # aktualizacja kosztow
+                # tutaj metoda prob i bledow probowalem tez :D
+                new_f_cost = round(
+                    self.f_costs[current] + 1 + self.heuristic(neighbor, self.start),
+                    4,
+                )
+                if neighbor not in self.f_costs or new_f_cost < self.f_costs[neighbor]:
                     self.path_map[neighbor] = current
-                    self.g_costs[neighbor] = checked_g_cost
-                    self.f_costs[neighbor] = checked_g_cost + self.heuristic(
-                        neighbor, self.end
-                    )
+                    self.f_costs[neighbor] = new_f_cost
 
-                    # dodanie sasiada do listy otwartej jesli go tam nie ma
                     if neighbor not in [x[1] for x in self.open_list]:
                         self.open_list.append((self.f_costs[neighbor], neighbor))
 
@@ -97,7 +103,8 @@ class Astar:
         return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
     def get_neighbors(self, current: dict) -> list[tuple[int, int]]:
-        # w tej funkcji musialem odpowiednio ustawic kierunki, aby funkcja nadawala priorytet poruszaniu sie najpierw w prawo, pozniej w gore
+        # w tej funkcji musialem odpowiednio ustawic kierunki,
+        # aby funkcja nadawala priorytet poruszaniu sie najpierw w prawo, pozniej w gore
         row, col = current
         neighbors = []
 
@@ -146,6 +153,3 @@ class Astar:
             print(f"wall crushed at {current[0]}, {current[1]}")
             self.crushed_walls_location.append((current[0], current[1]))
             self.crushed_walls += 1
-
-
-Astar()
