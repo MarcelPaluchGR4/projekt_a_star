@@ -2,7 +2,7 @@
 
 import math
 
-PATH_TO_GRID_FILE = "grid2.txt"
+PATH_TO_GRID_FILE = "grid3.txt"
 
 
 class Astar:
@@ -86,23 +86,32 @@ class Astar:
                     4,
                 )
                 try:
-                    if neighbor in self.f_costs or new_f_cost >= self.f_costs[neighbor]:
+                    if neighbor in self.f_costs:
+                        continue
+                    if new_f_cost >= self.f_costs[neighbor]:
                         continue
                 except KeyError:
-                    pass
-
-                self.path_map[neighbor] = current
-                self.f_costs[neighbor] = new_f_cost
+                    self.path_map[neighbor] = current
+                    self.f_costs[neighbor] = new_f_cost
 
                 if self.check_if_in_open_list(neighbor):
                     continue
 
-                self.open_list.append(((self.f_costs[neighbor], neighbor)))
+                self.open_list.append((self.f_costs[neighbor], neighbor))
 
     def get_lowest_f_cost(self) -> tuple[int, int]:
         """zwraca wspolrzedne elementu o najnizszym koszcie"""
-        lowest_cost = min(self.open_list, key=lambda x: x[0])
-        return lowest_cost[1]
+        cost = self.open_list[0][0]
+        coordinates = self.open_list[0][1]
+        for item in self.open_list:
+            new_coordinates = item[1]
+            if item[0] <= cost:
+                cost = item[0]
+                coordinates = new_coordinates
+        return coordinates
+
+        # lowest_cost = min(self.open_list, key=lambda x: x[0])
+        # return lowest_cost[1]
 
     def reconstruct_path(self) -> None:
         """stworz sciezke"""
@@ -122,10 +131,6 @@ class Astar:
         row, col = current
         neighbors = []
 
-        # w prawo
-        if col < self.cols - 1:
-            neighbors.append((row, col + 1))
-
         # w gore
         if row > 0:
             neighbors.append((row - 1, col))
@@ -133,6 +138,10 @@ class Astar:
         # w dol
         if row < self.rows - 1:
             neighbors.append((row + 1, col))
+
+        # w prawo
+        if col < self.cols - 1:
+            neighbors.append((row, col + 1))
 
         # w lewo
         if col > 0:
@@ -158,6 +167,9 @@ class Astar:
 
     def print_path(self) -> None:
         """wyprintuj grid po znalezieniu sciezki"""
+        if len(self.open_list) == 0:
+            print("nie znaleziono sciezki")
+            return
         for row in self.grid:
             print(row)
 
